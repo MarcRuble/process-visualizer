@@ -1,0 +1,57 @@
+{
+	"transitions":
+	[
+		{
+			"id": "init A",
+			"time": 0,
+			"repeatFreq": 0,
+			"priority": 0,
+			"from": "A",
+			"to": "A",
+			"durationFrom": -1,
+			"durationTo": -1,
+			"durationArrow": 0,
+			"annotation": "",
+			"color": "",
+			"answer": {}
+		},
+		{
+			"id": "A -> B",
+			"time": 1,
+			"repeatFreq": 0,
+			"priority": 0,
+			"from": "A",
+			"to": "B",
+			"durationFrom": 0,
+			"durationTo": 2,
+			"durationArrow": 1,
+			"annotation": "1",
+			"color": "blue",
+			"answer":
+			{
+				"id": "B -> A",
+				"delay": 1,
+				"priority": 0,
+				"durationFrom": 0.5,
+				"durationTo": -1,
+				"durationArrow": 0.5,
+				"annotation": "3",
+				"color": "blue"
+			}
+		},
+		{
+			"id": "B -> C",
+			"time": 1.5,
+			"repeatFreq": 0,
+			"priority": 0,
+			"from": "B",
+			"to": "C",
+			"durationFrom": -1,
+			"durationTo": -1,
+			"durationArrow": 1.0,
+			"annotation": "2",
+			"color": "green",
+			"answer": {}
+		}
+	]
+}

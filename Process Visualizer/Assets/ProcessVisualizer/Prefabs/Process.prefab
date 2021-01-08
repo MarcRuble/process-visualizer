@@ -1880,7 +1880,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 851c9afba34b47b45bfee614bd975d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultTimeMultiplier: 0.5
+  defaultTimeMultiplier: 1
   timePadding: 1
   scenarioDropdown: {fileID: 393468900383588338}
   pauseText: {fileID: 393468899942543033}

@@ -11,6 +11,7 @@ namespace ProcessVisualizer
     public class ScenarioController : MonoBehaviour
     {
         #region PUBLIC FIELDS
+        public float defaultTimeMultiplier = 1f;
         public float timePadding = 1f;
         public TMP_Dropdown scenarioDropdown;
         public TextMeshProUGUI pauseText;
@@ -22,6 +23,7 @@ namespace ProcessVisualizer
 
         #region PRIVATE FIELDS
         private List<Transition> transitions;
+        private List<Transition> transitionStarts;
         private ScenarioView scenarioView;
         private Timer timer;
         private float speed = 1f;
@@ -42,6 +44,7 @@ namespace ProcessVisualizer
         {
             scenarioView = ScenarioView.instance;
             Reset();
+            SetSpeed();
         }
 
         private void Update()
@@ -57,7 +60,18 @@ namespace ProcessVisualizer
                     return;
             }
 
-            while (transitions.Count > 0 && transitions[0].time <= timer.GetTime())
+            // half of animation duration
+            float duration = Parameters.instance.arrowAnimationDuration / 2f;
+
+            // handle starts of the transition animation
+            while (transitionStarts.Count > 0 && transitionStarts[0].time - duration <= timer.GetTime())
+            {
+                StartTransition(transitionStarts[0]);
+                transitionStarts.RemoveAt(0);
+            }
+
+            // handle the actual transitions
+            while (transitions.Count > 0 && transitions[0].time + duration <= timer.GetTime())
             {
                 ApplyTransition(transitions[0]);
                 transitions.RemoveAt(0);
@@ -89,6 +103,9 @@ namespace ProcessVisualizer
 
             // sort the list on time
             transitions.Sort((t1, t2) => t1.time.CompareTo(t2.time));
+
+            // create separate copy for managing of animation starts
+            transitionStarts = new List<Transition>(transitions);
         }
 
         public void StartScenario()
@@ -116,7 +133,7 @@ namespace ProcessVisualizer
         {
             float speed = slider.value;
             this.speed = speed;
-            Time.timeScale = speed;
+            Time.timeScale = defaultTimeMultiplier * speed;
         }
 
         public void SetLoop()
@@ -129,8 +146,17 @@ namespace ProcessVisualizer
         private void Reset()
         {
             transitions = new List<Transition>();
+            transitionStarts = new List<Transition>();
         }
 
+        // Starts the arrow animation.
+        private void StartTransition(Transition t)
+        {
+            // activate the arrow
+            scenarioView.ActivateArrow(t.from, t.to, t.GetContext(), t.annotation, t.color);
+        }
+
+        // Actually applies the transition with its consequences.
         private void ApplyTransition(Transition t)
         {
             // first hightlight the receiving node
@@ -152,10 +178,7 @@ namespace ProcessVisualizer
                     DelayEndHighlightNode(t.durationFrom, t.from, t.GetContext()));
             }
 
-            // activate the arrow
-            scenarioView.ActivateArrow(t.from, t.to, t.GetContext(), t.annotation, t.color);
-
-            // and start coroutine to end this effect
+            // start coroutine to end arrow
             StartCoroutine(
                 DelayDeactivateArrow(t.durationArrow, t.from, t.to, t.GetContext()));
         }
@@ -165,7 +188,7 @@ namespace ProcessVisualizer
         private IEnumerator DelayEndHighlightNode
             (float delay, string nodeID, Context context)
         {
-            yield return new WaitForSeconds(delay);
+            yield return new WaitForSeconds(delay + Parameters.instance.arrowAnimationDuration);
             scenarioView.EndHighlightNode(nodeID, context);
         }
 

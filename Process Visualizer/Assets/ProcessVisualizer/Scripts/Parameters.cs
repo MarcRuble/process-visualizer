@@ -9,6 +9,7 @@ namespace ProcessVisualizer
         public float arrowAnimationDuration = 0.1f;
         public Color standard;
         public Color highlight;
+        public Color background;
         public Color blue;
         public Color red;
         public Color green;

@@ -10,7 +10,7 @@ namespace ProcessVisualizer
 
         public Timer()
         {
-            start = Time.time;
+            this.start = Time.time;
         }
 
         public float GetTime()

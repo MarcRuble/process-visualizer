@@ -10,6 +10,8 @@ namespace ProcessVisualizer
         public string id;
         public Image visual;
 
+        private Context currentContext = Context.EMPTY;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -22,16 +24,24 @@ namespace ProcessVisualizer
         public void Reset()
         {
             visual.color = Parameters.instance.standard;
+            currentContext = Context.EMPTY;
         }
 
         public void StartHighlight(Context context)
         {
             visual.color = Parameters.instance.highlight;
+            currentContext = context;
         }
 
         public void EndHighlight(Context context)
         {
-            visual.color = Parameters.instance.standard;
+            // avoid overriding of active components
+            if (currentContext.IsEmpty() || currentContext.Equals(context)
+                || currentContext.priority < context.priority)
+            {
+                visual.color = Parameters.instance.standard;
+                currentContext = Context.EMPTY;
+            }
         }
     }
 }
